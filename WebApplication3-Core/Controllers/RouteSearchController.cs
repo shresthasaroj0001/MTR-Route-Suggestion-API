@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -27,12 +28,12 @@ namespace WebApplication3_Core.Controllers
         {
             if (queryParameter.to == queryParameter.from)
                 return BadRequest();
-            if (queryParameter.filterby == null)
+            if (string.IsNullOrEmpty(queryParameter.filterby))
                 queryParameter.filterby = "station";
             else //station,fare,duration
             {
                 queryParameter.filterby = queryParameter.filterby.ToLower();
-                if (queryParameter.filterby != "station" || queryParameter.filterby != "fare" || queryParameter.filterby != "duration")
+                if (queryParameter.filterby != "station" && queryParameter.filterby != "fare" && queryParameter.filterby != "duration")
                     queryParameter.filterby = "station";
             }
                 
@@ -49,5 +50,13 @@ namespace WebApplication3_Core.Controllers
             return Ok(routes);
         }
 
+        [Authorize]
+        [Route("/api/routesearch/Get-Route-History")]
+        [HttpGet]
+        public async Task<IActionResult> GetRouteSearches([FromQuery]int pageSize)
+        {
+            var searches = await _routeSearchIRepository.GetRouteSearches(pageSize);
+            return Ok(searches);
+        }
     }
 }

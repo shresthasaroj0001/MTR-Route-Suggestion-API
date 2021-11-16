@@ -10,7 +10,7 @@ namespace WebApplication3_Core.Repositories
     public interface IRouteSearchRepository
     {
         GenericResponseObject<List<StationLink>> GetShortestRoute(int sourceId, int destinationId,string filterby);
-
         Task<GenericResponseObject<List<StationLink>>> GetAllRoute();
+        Task<GenericResponseObject<List<RouteSearch>>> GetRouteSearches(int pageSize);
     }
 }

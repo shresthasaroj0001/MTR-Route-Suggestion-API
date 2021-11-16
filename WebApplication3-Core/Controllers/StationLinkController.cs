@@ -13,29 +13,20 @@ namespace WebApplication3_Core.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class StationController : ControllerBase
+    public class StationLinkController : ControllerBase
     {
         private readonly IStationRepository _stationRepository;
-        public StationController(IStationRepository stationRepository)
+        public StationLinkController(IStationRepository stationRepository)
         {
             _stationRepository = stationRepository;
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> GetStations()
-        {
-            var stations = await _stationRepository.GetAllStations();
-            return Ok(stations);
-        }
-
-        [Route("/api/station/update")]
+        [Route("/api/stationlink/update")]
         [HttpPost]
-        public async Task<IActionResult> UpdateStationDetail([FromBody]Station station)
+        public async Task<IActionResult> UpdateStationLink([FromBody] StationLink stationlink)
         {
-            await _stationRepository.UpdateStation(station);
+            await _stationRepository.UpdateStationLink(stationlink);
             return Ok();
         }
-
     }
 }

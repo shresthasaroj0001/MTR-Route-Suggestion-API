@@ -19,5 +19,17 @@ namespace WebApplication3_Core.Repositories
         {
             return await _context.Stations.ToListAsync();
         }
+
+        public async Task UpdateStation(Station station)
+        {
+            _context.Entry(station).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateStationLink(StationLink stationLink)
+        {
+            _context.Entry(stationLink).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
     }
 }

@@ -9,5 +9,7 @@ namespace WebApplication3_Core.Repositories
     public interface IStationRepository
     {
         Task<IEnumerable<Station>> GetAllStations();
+        Task UpdateStation(Station station);
+        Task UpdateStationLink(StationLink stationLink);
     }
 }

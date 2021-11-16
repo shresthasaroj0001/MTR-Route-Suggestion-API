@@ -66,8 +66,13 @@ namespace WebApplication3_Core.Repositories
                     responseObject.IsSuccess = true;
                 }
 
-                //_context.RouteSearches.Add(new RouteSearch() { FromStationId = sourceId, ToStationId = destinationId, DateSearched = new DateTime() });
-                //_context.SaveChanges();
+                _context.RouteSearches.Add(new RouteSearch()
+                {
+                    FromStationId = sourceId,
+                    ToStationId = destinationId,
+                    DateSearched = DateTime.Now
+                });
+                _context.SaveChanges();
             }
             catch (Exception)
             {
@@ -82,10 +87,27 @@ namespace WebApplication3_Core.Repositories
         {
             GenericResponseObject<List<StationLink>> responseObject = new GenericResponseObject<List<StationLink>>();
             List<StationLink> models = new List<StationLink>();
-            models = await _context.StationLinks.Include(x=>x.FromStation).Include(y=>y.ToStation).ToListAsync();
+            models = await _context.StationLinks.Include(x => x.FromStation).Include(y => y.ToStation).ToListAsync();
             responseObject.Data = models;
             responseObject.IsSuccess = true;
             responseObject.Message = "Retrieved Successfull";
+            return responseObject;
+        }
+
+        public async Task<GenericResponseObject<List<RouteSearch>>> GetRouteSearches(int pageSize)
+        {
+            GenericResponseObject<List<RouteSearch>> responseObject = new GenericResponseObject<List<RouteSearch>>();
+            List<RouteSearch> routeSeaches = new List<RouteSearch>();
+            routeSeaches = await _context.RouteSearches.Include(x => x.FromStation).Include(y => y.ToStation).Skip(pageSize * 10).Take(10).ToListAsync();
+            var totalResult = await _context.RouteSearches.CountAsync();
+
+            responseObject.Data = routeSeaches;
+            responseObject.IsSuccess = true;
+            if (routeSeaches.Count() == 0)
+                responseObject.Message = "No result found";
+            else
+                responseObject.Message = "Showing " + ((pageSize * 10) + 1) + " to " + ((pageSize * 10) + routeSeaches.Count()) + " of " + totalResult + " entries";//Showing 1 to 10 of 57 entries
+            responseObject.PageSize = totalResult - (routeSeaches.Count() + pageSize * 10);
             return responseObject;
         }
     }

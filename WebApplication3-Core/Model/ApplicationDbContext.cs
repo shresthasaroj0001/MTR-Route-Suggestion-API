@@ -18,18 +18,8 @@ namespace WebApplication3_Core.Model
         public DbSet<Station> Stations { get; set; }
         public DbSet<StationLink> StationLinks { get; set; }
         public DbSet<RouteSearch> RouteSearches { get; set; }
+        public DbSet<UserCredential> UserCredentials { get; set; }
 
-        /*
-          new Employee
-            {
-                EmployeeId = 2,
-                FirstName = "Jan",
-                LastName = "Kirsten",
-                Email = "jan.kirsten@gmail.com",
-                DateOfBirth = new DateTime(1981, 07, 13),
-                PhoneNumber = "111-222-3333"
-            }
-         */
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Station>().HasData(
