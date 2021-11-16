@@ -64,6 +64,8 @@ namespace WebApplication3_Core
 
             services.AddSwaggerGen(option =>
             {
+                option.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+
                 option.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
                 {
                     Name = "Authorization",
@@ -99,18 +101,24 @@ namespace WebApplication3_Core
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI(
-                c =>
-                {
-                    c.SwaggerEndpoint("v1/swagger.json", "MTR Route Suggestion App");
-                    c.RoutePrefix = string.Empty;
-                });
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.Use(async (context, next) =>
+            {
+                await next();
+                if (context.Response.StatusCode == 404 && !System.IO.Path.HasExtension(context.Request.Path.Value))
+                {
+                    context.Request.Path = "/index.html";
+                    await next();
+                }
+            });
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseCors(
                     options => options.AllowAnyOrigin().AllowAnyMethod()
                 );
@@ -131,6 +139,15 @@ namespace WebApplication3_Core
                 //    defaults: new { controller = "Station", action = "GetStations" });
                 endpoints.MapControllers();
             });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(
+                c =>
+                {
+                    //c.SwaggerEndpoint(Configuration["App:ServerRootAddress"] + "v1/swagger.json", "MTR Route Suggestion App");
+                    c.SwaggerEndpoint("swagger/v1/swagger.json", "MTR Route Suggestion App");
+                    c.RoutePrefix = string.Empty;
+                });
         }
     }
 }
