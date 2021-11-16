@@ -104,6 +104,7 @@ namespace WebApplication3_Core
                 c =>
                 {
                     c.SwaggerEndpoint("v1/swagger.json", "MTR Route Suggestion App");
+                    c.RoutePrefix = string.Empty;
                 });
 
             if (env.IsDevelopment())
