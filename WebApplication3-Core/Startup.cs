@@ -17,6 +17,8 @@ using System.Threading.Tasks;
 using WebApplication3_Core.HelperClasses;
 using WebApplication3_Core.Model;
 using WebApplication3_Core.Repositories;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace WebApplication3_Core
 {
@@ -59,12 +61,51 @@ namespace WebApplication3_Core
                         ValidateIssuer = false
                     };
                 });
+
+            services.AddSwaggerGen(option =>
+            {
+                option.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+                });
+                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                     {
+                         {
+                               new OpenApiSecurityScheme
+                                 {
+                                     Reference = new OpenApiReference
+                                     {
+                                         Type = ReferenceType.SecurityScheme,
+                                         Id = "Bearer"
+                                     }
+                                 },
+                                 new string[] {}
+                         }
+                     });
+            });
+
+            //option.OperationFilter<SecurityRequirementsOperationFilter>();
+
             //services.AddSingleton(typeof(IJwtTokenManager), typeof(JwtTokenManager));
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(
+                c =>
+                {
+                    c.SwaggerEndpoint("v1/swagger.json", "MTR Route Suggestion App");
+                });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

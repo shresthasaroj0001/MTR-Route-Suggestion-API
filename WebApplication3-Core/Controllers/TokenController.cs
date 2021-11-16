@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApplication3_Core.HelperClasses;
 using WebApplication3_Core.Model;
 using WebApplication3_Core.Repositories;
 
@@ -21,7 +22,8 @@ namespace WebApplication3_Core.Controllers
         }
 
         [Route("/api/token/authenticate")]
-        public IActionResult Authenticate([FromQuery] UserCredential userCredential)
+        [HttpGet]
+        public IActionResult Authenticate([FromQuery] UserLoginModel userCredential)
         {
             GenericResponseObject<string> responseObject = new GenericResponseObject<string>();
             if(string.IsNullOrEmpty(userCredential.Username) || string.IsNullOrEmpty(userCredential.Username))
@@ -47,6 +49,7 @@ namespace WebApplication3_Core.Controllers
         }
 
         [Route("/api/user/register")]
+        [HttpGet]
         public async Task<IActionResult> UserRegistration([FromQuery] UserCredential user)
         {
             GenericResponseObject<string> responseObject = new GenericResponseObject<string>();
